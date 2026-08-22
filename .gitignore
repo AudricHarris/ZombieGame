@@ -1,0 +1,5 @@
+*.rbxl
+*.rbxlx
+.rojo/
+node_modules/
+.DS_Store
