@@ -1,0 +1,3 @@
+local UiController = {}
+
+return UiController

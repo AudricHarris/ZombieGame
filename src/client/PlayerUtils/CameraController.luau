@@ -3,34 +3,29 @@ local RunService = game:GetService("RunService")
 
 local CameraController = {}
 CameraController.ActiveCamera = nil
+CameraController.TransitionSpeed = 5 -- Lower = smoother, Higher = faster
 
 function CameraController:Init()
-    -- RenderStepped ensures smooth camera updates right before rendering each frame
-    RunService.RenderStepped:Connect(function(dt)
-        if self.ActiveCamera then
-            self.ActiveCamera:Update(dt)
-        end
-    end)
+	-- RenderStepped / PreRender is required for custom local camera positioning
+	RunService.RenderStepped:Connect(function(dt)
+		if self.ActiveCamera and self.ActiveCamera.Update then
+			self.ActiveCamera:Update(dt)
+		end
+	end)
 end
 
---- Ensures ONLY ONE camera is active per player at a time
 function CameraController:SwitchCamera(newCamera)
-    print("Hi here", newCamera)
-    if self.ActiveCamera == newCamera then return end
+	if self.ActiveCamera == newCamera then return end
 
-    -- 1. Disable the currently active camera (if any exists)
-    if self.ActiveCamera then
-        self.ActiveCamera:Disable()
-    end
+	if self.ActiveCamera and self.ActiveCamera.Disable then
+		self.ActiveCamera:Disable()
+	end
 
-    -- 2. Switch to the new camera instance
-    self.ActiveCamera = newCamera
+	self.ActiveCamera = newCamera
 
-    print(self.ActiveCamera)
-    -- 3. Enable the new camera instance
-    if self.ActiveCamera then
-        self.ActiveCamera:Enable()
-    end
+	if self.ActiveCamera and self.ActiveCamera.Enable then
+		self.ActiveCamera:Enable()
+	end
 end
 
 return CameraController
