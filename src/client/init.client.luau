@@ -42,7 +42,7 @@ hoverHighlight.Name = "InteractableHoverHighlight"
 hoverHighlight.FillColor = Color3.fromRGB(255, 255, 255)
 hoverHighlight.FillTransparency = 1
 hoverHighlight.OutlineColor = Color3.fromRGB(255, 255, 150)
-hoverHighlight.OutlineTransparency = 0
+hoverHighlight.OutlineTransparency = 0.75
 hoverHighlight.Adornee = nil
 hoverHighlight.Parent = LocalPlayer:WaitForChild("PlayerGui")
 

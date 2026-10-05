@@ -18,22 +18,28 @@ local MAX_ANGLE = 10          -- degrees off the camera's look direction before 
 local MIN_COS = math.cos(math.rad(MAX_ANGLE))
 local IDEAL_DISTANCE = 10
 local MIN_DISTANCE = 6        -- closer than this is never chosen (unless nothing else works)
+local DEFAULT_MAX_DISTANCE = 30 -- per-camera "MaxDistance" attribute overrides this; farther than this = camera is never chosen
 
 local TRANSPARENT_THRESHOLD = 0.5 -- parts at or above this Transparency don't block the view
+local MAX_SKIPS = 20
 
+local NEG = -math.huge
 local pause = false
 
+-- Reused every call so we don't allocate in a hot path
+local viewParams = RaycastParams.new()
+viewParams.FilterType = Enum.RaycastFilterType.Exclude
+viewParams.IgnoreWater = true
+local ignoreList: { Instance } = {}
+local scores, dots, positions = {}, {}, {}
+
 local function isViewBlocked(camPos: Vector3, targetPos: Vector3, character: Model): boolean
-	local params = RaycastParams.new()
-	params.FilterType = Enum.RaycastFilterType.Exclude
-	params.IgnoreWater = true
+	table.clear(ignoreList)
+	table.insert(ignoreList, character)
+	viewParams.FilterDescendantsInstances = ignoreList
 
-	local ignore: { Instance } = { character }
-	local origin = camPos
-
-	for _ = 1, 20 do -- safety cap on how many see-through parts we skip
-		params.FilterDescendantsInstances = ignore
-		local result = workspace:Raycast(origin, targetPos - origin, params)
+	for _ = 1, MAX_SKIPS do -- safety cap on how many see-through parts we skip
+		local result = workspace:Raycast(camPos, targetPos - camPos, viewParams)
 		if not result then
 			return false -- nothing in the way
 		end
@@ -43,13 +49,38 @@ local function isViewBlocked(camPos: Vector3, targetPos: Vector3, character: Mod
 		local isOtherCharacter = hit.Parent and hit.Parent:FindFirstChildOfClass("Humanoid") ~= nil
 
 		if isSeeThrough or isOtherCharacter then
-			table.insert(ignore, hit) -- skip it and keep looking
+			table.insert(ignoreList, hit) -- skip it and keep looking
+			viewParams.FilterDescendantsInstances = ignoreList
 		else
 			return true -- opaque wall
 		end
 	end
 
 	return true
+end
+
+local function takeBest(arr, n: number): number?
+	local bestI, bestV = nil, NEG
+	for i = 1, n do
+		if arr[i] > bestV then
+			bestI, bestV = i, arr[i]
+		end
+	end
+	return bestI
+end
+
+-- Walk candidates best-first and only raycast until one is unblocked
+local function resolve(arr, n: number, targetPos: Vector3, character: Model)
+	while true do
+		local i = takeBest(arr, n)
+		if not i then return nil end
+		if not isViewBlocked(positions[i], targetPos, character) then
+			return camTable[i].object
+		end
+		-- blocked: remove from both tiers
+		scores[i] = NEG
+		dots[i] = NEG
+	end
 end
 
 function PlayerCameraChooser.Init(folder: Folder?): boolean
@@ -71,13 +102,23 @@ function PlayerCameraChooser.Init(folder: Folder?): boolean
 			cameraObject = mouseCamera.new(camInstance)
 		end
 
-		table.insert(camTable, {
+		local camData = {
 			instance = camInstance,
 			object = cameraObject,
 			type = camType,
 			priority = priority,
-			zone = camInstance:FindFirstChild("TriggerZone")
-		})
+			maxDistance = camInstance:GetAttribute("MaxDistance") :: number? or DEFAULT_MAX_DISTANCE,
+			zone = camInstance:FindFirstChild("TriggerZone"),
+		}
+		table.insert(camTable, camData)
+
+		-- Keep values live if they're changed at runtime
+		camInstance:GetAttributeChangedSignal("Priority"):Connect(function()
+			camData.priority = camInstance:GetAttribute("Priority") :: number? or 1
+		end)
+		camInstance:GetAttributeChangedSignal("MaxDistance"):Connect(function()
+			camData.maxDistance = camInstance:GetAttribute("MaxDistance") :: number? or DEFAULT_MAX_DISTANCE
+		end)
 	end
 
 	return true
@@ -92,50 +133,41 @@ function PlayerCameraChooser.getBestCamera(character: Model): any
 	if not hrp then return nil end
 	if pause then return nil end
 
-	local rayParams = RaycastParams.new()
-	rayParams.FilterDescendantsInstances = { character }
-	rayParams.FilterType = Enum.RaycastFilterType.Exclude
-	rayParams.IgnoreWater = true
+	local targetPos = hrp.Position
+	local n = #camTable
 
-	-- Tier 1: in the shot AND nothing opaque in the way
-	local bestCam, bestScore = nil, -math.huge
-	-- Tier 2 (last resort): whichever unblocked camera faces the player the most
-	local facingCam, facingDot = nil, -math.huge
+	-- Cheap pass: no raycasts. Fills two score arrays.
+	--   scores = Tier 1: in the shot (angle + min distance)  -> weighted score
+	--   dots   = Tier 2 (last resort): any camera in range    -> how much it faces the player
+	for i = 1, n do
+		scores[i], dots[i] = NEG, NEG
 
-	for _, camData in ipairs(camTable) do
-		local camCFrame = camData.instance:IsA("BasePart") and camData.instance.CFrame or CFrame.new(camData.instance.Position)
+		local camData = camTable[i]
+		local inst = camData.instance
+		local camCFrame = inst:IsA("BasePart") and inst.CFrame or CFrame.new(inst.Position)
 		local camPos = camCFrame.Position
-		local direction = hrp.Position - camPos
+		positions[i] = camPos
+
+		local direction = targetPos - camPos
 		local distance = direction.Magnitude
-		if distance < 0.001 then continue end
+		if distance < 0.001 or distance > camData.maxDistance then continue end -- out of range = never an option
 
-		-- Opaque wall in the way: this camera is never an option
-		if isViewBlocked(camPos, hrp.Position, character) then continue end
+		local dot = camCFrame.LookVector:Dot(direction / distance)
+		dots[i] = dot
 
-		local dot = camCFrame.LookVector:Dot(direction.Unit)
+		if dot >= MIN_COS and distance >= MIN_DISTANCE then
+			local centerScore = (dot - MIN_COS) / (1 - MIN_COS)
+			local distanceScore = 1 - math.clamp(math.abs(distance - IDEAL_DISTANCE) / IDEAL_DISTANCE, 0, 1)
 
-		if dot > facingDot then
-			facingDot = dot
-			facingCam = camData.object
-		end
-
-		if dot < MIN_COS or distance < MIN_DISTANCE then continue end
-
-		local centerScore = (dot - MIN_COS) / (1 - MIN_COS)
-		local distanceScore = 1 - math.clamp(math.abs(distance - IDEAL_DISTANCE) / IDEAL_DISTANCE, 0, 1)
-
-		local score = camData.priority * PRIORITY_WEIGHT
-			+ centerScore * CENTER_WEIGHT
-			+ distanceScore * DISTANCE_WEIGHT
-
-		if score > bestScore then
-			bestScore = score
-			bestCam = camData.object
+			scores[i] = camData.priority * PRIORITY_WEIGHT
+				+ centerScore * CENTER_WEIGHT
+				+ distanceScore * DISTANCE_WEIGHT
 		end
 	end
 
-	-- If every camera is blocked, return nil so the caller keeps the current camera
-	return bestCam or facingCam
+	-- Raycast only as many candidates as needed, best first.
+	-- If every camera is out of range or blocked, return nil so the caller keeps the current camera.
+	return resolve(scores, n, targetPos, character) or resolve(dots, n, targetPos, character)
 end
 
 return PlayerCameraChooser
