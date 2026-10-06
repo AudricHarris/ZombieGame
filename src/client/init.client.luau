@@ -8,6 +8,8 @@ local LocalPlayer = PLR.LocalPlayer
 local PlayerScripts = LocalPlayer:WaitForChild("PlayerScripts")
 local Mouse = LocalPlayer:GetMouse()
 
+local Networker = require(RPS.Shared.Networker)
+
 -- Requirements
 local cameraController = require(PlayerScripts.Client.PlayerUtils.CameraController)
 local movementController = require(PlayerScripts.Client.PlayerUtils.MovementController)
@@ -15,13 +17,16 @@ local plrCamChooser = require(PlayerScripts.Client.PlayerUtils.PlayerCameraChoos
 
 local Interactable = require(PlayerScripts.Client.PlayerUtils.Interactions.Interactable)
 local Door = require(PlayerScripts.Client.PlayerUtils.Interactions.Door)
+local Elevator = require(PlayerScripts.Client.PlayerUtils.Interactions.Elevator)
+local Voting = require(PlayerScripts.Client.PlayerUtils.UI.VotingGui)
+
 -- Game Execution
 cameraController:Init()
 
 local camFolder = workspace:WaitForChild("CameraFolder")
 task.wait(2)
 if LocalPlayer.Name == "WearWQLF" then
-	task.wait(7)
+	task.wait(17)
 end
 
 plrCamChooser.Init(camFolder)
@@ -52,6 +57,8 @@ local function registerInteractable(instance: Instance)
 	local interactType = instance:GetAttribute("Type") or "Misc"
 	if interactType == "Door" then
 		interactableObjects[instance] = Door.new(instance)
+	elseif interactType == "Elevator" then
+		interactableObjects[instance] = Elevator.new(instance)
 	else
 		interactableObjects[instance] = Interactable.new(instance)
 	end
@@ -110,7 +117,12 @@ Mouse.Button1Up:Connect(function()
 
 	if interactObj and character then
 		if interactObj:CanInteract(character) then
-			interactObj:Interact(LocalPlayer)
+			if taggedInst:GetAttribute("Type") == "Elevator" then
+				Networker.FireServer("ElevatorVoteRequest", taggedInst)
+			else
+				interactObj:Interact(LocalPlayer)
+			end
+
 			return -- Skip movement if an interaction occurred
 		end
 	end
@@ -139,5 +151,14 @@ RS.RenderStepped:Connect(function(dt)
 		hoverHighlight.Adornee = taggedInst
 	else
 		hoverHighlight.Adornee = nil
+	end
+end)
+
+-- Handle elevator voting results
+Networker.OnClientEvent("ElevatorVoteSuccess"):Connect(function(elevator)
+	local elevatorObject = interactableObjects[elevator]
+
+	if elevatorObject and character then
+		elevatorObject:Interact(LocalPlayer)
 	end
 end)

@@ -4,6 +4,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local NetworkRegister = require(script.NetworkRegister)
+local Voting = require(script.ElevatorVoteManager)
+local DataStore = require(script.DataStore)
 local CharacterHandler = require(ReplicatedStorage.Shared.Outfit.CharacterHandler)
 
 local function onPlayerAdded(player: Player)
@@ -27,3 +29,5 @@ Lighting.Brightness = 0
 Lighting.TimeOfDay = 0
 
 NetworkRegister.start()
+Voting:Start()
+DataStore:Start()
