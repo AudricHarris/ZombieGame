@@ -1,1 +1,310 @@
-{"name":"ZombieGame","className":"DataModel","filePaths":["default.project.json"],"children":[{"name":"Lighting","className":"Lighting"},{"name":"ReplicatedStorage","className":"ReplicatedStorage","children":[{"name":"Shared","className":"Folder","children":[{"name":"Networker","className":"ModuleScript","filePaths":["src/shared/Networker.luau"]},{"name":"Outfit","className":"Folder","children":[{"name":"CharacterHandler","className":"ModuleScript","filePaths":["src/shared/Outfit/CharacterHandler.luau"]},{"name":"CustomCharacter","className":"ModuleScript","filePaths":["src/shared/Outfit/CustomCharacter.luau"]}]}]}]},{"name":"ServerScriptService","className":"ServerScriptService","children":[{"name":"Server","className":"Script","filePaths":["src/server/init.server.luau"],"children":[{"name":"NetworkRegister","className":"ModuleScript","filePaths":["src/server/NetworkRegister.luau"]},{"name":"Story","className":"Folder","children":[{"name":"GameStateMachine","className":"ModuleScript","filePaths":["src/server/Story/GameStateMachine.luau"]},{"name":"States","className":"Folder","children":[{"name":"Part1State","className":"ModuleScript","filePaths":["src/server/Story/States/Part1State.luau"]}]}]}]}]},{"name":"SoundService","className":"SoundService"},{"name":"StarterPlayer","className":"StarterPlayer","children":[{"name":"StarterPlayerScripts","className":"StarterPlayerScripts","children":[{"name":"Client","className":"LocalScript","filePaths":["src/client/init.client.luau"],"children":[{"name":"PlayerUtils","className":"Folder","children":[{"name":"CameraController","className":"ModuleScript","filePaths":["src/client/PlayerUtils/CameraController.luau"]},{"name":"Cameras","className":"Folder","children":[{"name":"BaseCamera","className":"ModuleScript","filePaths":["src/client/PlayerUtils/Cameras/BaseCamera.luau"]},{"name":"FirstPersonCamera","className":"ModuleScript","filePaths":["src/client/PlayerUtils/Cameras/FirstPersonCamera.luau"]},{"name":"FixedCamera","className":"ModuleScript","filePaths":["src/client/PlayerUtils/Cameras/FixedCamera.luau"]},{"name":"MouseCamera","className":"ModuleScript","filePaths":["src/client/PlayerUtils/Cameras/MouseCamera.luau"]},{"name":"TrackingCamera","className":"ModuleScript","filePaths":["src/client/PlayerUtils/Cameras/TrackingCamera.luau"]}]},{"name":"Interactions","className":"Folder","children":[{"name":"Door","className":"ModuleScript","filePaths":["src/client/PlayerUtils/Interactions/Door.luau"]},{"name":"Interactable","className":"ModuleScript","filePaths":["src/client/PlayerUtils/Interactions/Interactable.luau"]}]},{"name":"Movement","className":"Folder","children":[{"name":"NodeMovement","className":"ModuleScript","filePaths":["src/client/PlayerUtils/Movement/NodeMovement.luau"]}]},{"name":"MovementController","className":"ModuleScript","filePaths":["src/client/PlayerUtils/MovementController.luau"]},{"name":"PlayerCameraChooser","className":"ModuleScript","filePaths":["src/client/PlayerUtils/PlayerCameraChooser.luau"]},{"name":"UI","className":"Folder"},{"name":"UiController","className":"ModuleScript","filePaths":["src/client/PlayerUtils/UiController.luau"]}]}]}]}]},{"name":"Workspace","className":"Workspace","children":[{"name":"Baseplate","className":"Part"}]}]}
+{
+  "name": "ZombieGame",
+  "className": "DataModel",
+  "filePaths": [
+    "default.project.json"
+  ],
+  "children": [
+    {
+      "name": "ReplicatedStorage",
+      "className": "ReplicatedStorage",
+      "children": [
+        {
+          "name": "Shared",
+          "className": "Folder",
+          "children": [
+            {
+              "name": "Networker",
+              "className": "ModuleScript",
+              "filePaths": [
+                "src/shared/Networker.luau"
+              ]
+            },
+            {
+              "name": "Outfit",
+              "className": "Folder",
+              "children": [
+                {
+                  "name": "CharacterHandler",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src/shared/Outfit/CharacterHandler.luau"
+                  ]
+                },
+                {
+                  "name": "CustomCharacter",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src/shared/Outfit/CustomCharacter.luau"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ServerScriptService",
+      "className": "ServerScriptService",
+      "children": [
+        {
+          "name": "Server",
+          "className": "Script",
+          "filePaths": [
+            "src/server/init.server.luau"
+          ],
+          "children": [
+            {
+              "name": "DataStore",
+              "className": "ModuleScript",
+              "filePaths": [
+                "src/server/DataStore.luau"
+              ]
+            },
+            {
+              "name": "ElevatorVoteManager",
+              "className": "ModuleScript",
+              "filePaths": [
+                "src/server/ElevatorVoteManager.luau"
+              ]
+            },
+            {
+              "name": "NetworkRegister",
+              "className": "ModuleScript",
+              "filePaths": [
+                "src/server/NetworkRegister.luau"
+              ]
+            },
+            {
+              "name": "PlayerSpawns",
+              "className": "ModuleScript",
+              "filePaths": [
+                "src/server/PlayerSpawns.luau"
+              ]
+            },
+            {
+              "name": "Story",
+              "className": "Folder",
+              "children": [
+                {
+                  "name": "GameStateMachine",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src/server/Story/GameStateMachine.luau"
+                  ]
+                },
+                {
+                  "name": "States",
+                  "className": "Folder",
+                  "children": [
+                    {
+                      "name": "Part1State",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "src/server/Story/States/Part1State.luau"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "StarterPlayer",
+      "className": "StarterPlayer",
+      "children": [
+        {
+          "name": "StarterPlayerScripts",
+          "className": "StarterPlayerScripts",
+          "children": [
+            {
+              "name": "Client",
+              "className": "LocalScript",
+              "filePaths": [
+                "src/client/init.client.luau"
+              ],
+              "children": [
+                {
+                  "name": "PlayerUtils",
+                  "className": "Folder",
+                  "children": [
+                    {
+                      "name": "Cameras",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "src/client/PlayerUtils/Cameras/init.luau"
+                      ],
+                      "children": [
+                        {
+                          "name": "BaseCamera",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Cameras/BaseCamera.luau"
+                          ]
+                        },
+                        {
+                          "name": "FirstPersonCamera",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Cameras/FirstPersonCamera.luau"
+                          ]
+                        },
+                        {
+                          "name": "FixedCamera",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Cameras/FixedCamera.luau"
+                          ]
+                        },
+                        {
+                          "name": "MouseCamera",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Cameras/MouseCamera.luau"
+                          ]
+                        },
+                        {
+                          "name": "TopDownCamera",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Cameras/TopDownCamera.luau"
+                          ]
+                        },
+                        {
+                          "name": "TrackingCamera",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Cameras/TrackingCamera.luau"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Controllers",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "CameraChooserController",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Controllers/CameraChooserController.luau"
+                          ]
+                        },
+                        {
+                          "name": "MouseController",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Controllers/MouseController.luau"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "Movement",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "src/client/PlayerUtils/Movement/init.luau"
+                      ],
+                      "children": [
+                        {
+                          "name": "NodeMovement",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Movement/NodeMovement.luau"
+                          ]
+                        },
+                        {
+                          "name": "WASDMovement",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/PlayerUtils/Movement/WASDMovement.luau"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "PlayerLinker",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "src/client/PlayerUtils/PlayerLinker.luau"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "UI",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src/client/UI/init.luau"
+                  ],
+                  "children": [
+                    {
+                      "name": "Components",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "ScreenFade",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/UI/Components/ScreenFade.luau"
+                          ]
+                        },
+                        {
+                          "name": "VotingGui",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/UI/Components/VotingGui.luau"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "World",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src/client/World/init.luau"
+                  ],
+                  "children": [
+                    {
+                      "name": "Interactions",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "Door",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/World/Interactions/Door.luau"
+                          ]
+                        },
+                        {
+                          "name": "Elevator",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/World/Interactions/Elevator.luau"
+                          ]
+                        },
+                        {
+                          "name": "Interactable",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "src/client/World/Interactions/Interactable.luau"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

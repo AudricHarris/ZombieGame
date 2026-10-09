@@ -1,5 +1,7 @@
 local PlayerCameraChooser = {}
 
+PlayerCameraChooser.ActiveCam = nil
+
 local camTable = {}
 local PLR = game:GetService("Players")
 
@@ -128,7 +130,7 @@ function PlayerCameraChooser.pause(bool)
 	pause = bool
 end
 
-function PlayerCameraChooser.getBestCamera(character: Model): any
+function PlayerCameraChooser.getBestCamera(character: Model): any?
 	local hrp = character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("Head")
 	if not hrp then return nil end
 	if pause then return nil end

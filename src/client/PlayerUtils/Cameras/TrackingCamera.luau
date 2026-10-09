@@ -1,12 +1,11 @@
 -- Services
 local Players = game:GetService("Players")
-local StarterPlayer = game:GetService("StarterPlayer")
 
 -- Variables
 local LocalPlayer = Players.LocalPlayer
 
 -- Requirements
-local BaseCamera = require(StarterPlayer.StarterPlayerScripts.Client.PlayerUtils.Cameras.BaseCamera)
+local BaseCamera = require(LocalPlayer.PlayerScripts.Client.PlayerUtils.Cameras.BaseCamera)
 
 --- @class tracking Camera
 --- This returns the cframe of the part while looking at the local players character 

@@ -37,9 +37,9 @@ CustomCharacter.Outfits = {
 	Outfit1 = {
 		SkinColor = Color3.fromRGB(227, 164, 118),
 		Head = "https://www.roblox.com/catalog/948/",
-		Shirt = "rbxassetid://115382067033056",
-		Pants = "rbxassetid://133062402990026",
-		Hair = "https://www.roblox.com/asset/?id=18976178789",
+		Shirt = "rbxassetid://1711669722",
+		Pants = "rbxassetid://1711671059",
+		Hair = "https://www.roblox.com/asset/?id=16332156529",
 		-- Hat = 123456,
 		-- Shoulders = { 111111, 222222 },
 		-- Back = 333333,

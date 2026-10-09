@@ -3,7 +3,7 @@ local Networker = require(ReplicatedStorage.Shared.Networker)
 
 local NetworkRegister = {}
 
-function NetworkRegister.start()
+function NetworkRegister:Start()
 	Networker.CreateFunction("CheckDoor")
 
 	Networker.OnServerInvoke("CheckDoor", function(player, door)

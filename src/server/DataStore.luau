@@ -54,7 +54,7 @@ function DataStore.LoadPlayerData(player: Player, retries: number?): { [string]:
 	retries = retries or 5
 	local store = GetStore(player)
 
-	for attempt = 1, retries do
+	for attempt = 1, retries :: number do
 		local success, data = pcall(function()
 			local d = store:Get({})
 			MergeDefaults(d, DEFAULT_PLAYER_DATA)

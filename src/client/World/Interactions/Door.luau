@@ -4,35 +4,31 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
 local LocalPlayer = Players.LocalPlayer
-local PlayerScripts = LocalPlayer:WaitForChild("PlayerScripts")
 
+local UI = require(LocalPlayer.PlayerScripts.Client.UI)
 local Networker = require(ReplicatedStorage.Shared.Networker)
-local CameraController = require(PlayerScripts.Client.PlayerUtils.CameraController)
-local PlayerCameraChooser = require(script.Parent.Parent.PlayerCameraChooser)
+local CameraController = require(LocalPlayer.PlayerScripts.Client.PlayerUtils.Cameras)
+local PlayerCameraChooser = require(LocalPlayer.PlayerScripts.Client.PlayerUtils.Controllers.CameraChooserController)
 local Interactable = require(script.Parent.Interactable)
 
-local transition = workspace.Transition
+local transition = workspace.Transitions.Door
 
 -- Locate Screen Fade GUI elements
-local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-local fadeGui = playerGui:WaitForChild("ScreenFadeGui")
-local fadeFrame = fadeGui:WaitForChild("FadeFrame")
+local Door = setmetatable({}, { __index = Interactable })
+Door.__index = Door
 
-local Elevator = setmetatable({}, { __index = Interactable })
-Elevator.__index = Elevator
-
-function Elevator.new(instance: Instance)
-	local self = setmetatable(Interactable.new(instance), Elevator)
+function Door.new(instance: Instance)
+	local self = setmetatable(Interactable.new(instance), Door)
 	return self
 end
 
-function Elevator:CheckIfLocked()
+function Door:CheckIfLocked()
 	local isLocked = Networker.InvokeServer("CheckDoor", self.Instance)
 	print(isLocked)
 	return isLocked
 end
 
-function Elevator:Interact(player: Player)
+function Door:Interact(player: Player)
 	if self.IsBusy then return end
 	self.IsBusy = true
 
@@ -46,7 +42,7 @@ function Elevator:Interact(player: Player)
 	local hrp = character:FindFirstChild("HumanoidRootPart")
 	local camera = Workspace.CurrentCamera
 
-	-- if elevator is locked
+	-- if door is locked
 	if self:CheckIfLocked() then
 		self.Instance.Locked:Play()
 		self.IsBusy = false
@@ -92,7 +88,10 @@ function Elevator:Interact(player: Player)
 	task.wait(1)
 
 	local fadeInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	
+	local fadeFrame = UI.Get("Fade")
+	print(fadeFrame)
+	if not fadeFrame then return end
+
 	local prop = fadeFrame:IsA("CanvasGroup") and "GroupTransparency" or "BackgroundTransparency"
 	
 	-- Tween to full black
@@ -137,5 +136,4 @@ function Elevator:Interact(player: Player)
 	self.IsBusy = false
 end
 
-return Elevator
-
+return Door

@@ -1,3 +1,0 @@
-local UiController = {}
-
-return UiController
